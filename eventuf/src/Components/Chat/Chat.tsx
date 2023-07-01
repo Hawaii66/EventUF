@@ -13,15 +13,17 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BottomTabBarHeightContext } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 
 interface Props {
   user: User;
   group: Group;
   friends: Friend[];
   send: (message: string) => void;
+  goBack: () => void;
 }
 
-function Chat({ user, friends, group, send }: Props) {
+function Chat({ goBack, user, friends, group, send }: Props) {
   const [message, setMessage] = useState("");
 
   return (
@@ -34,7 +36,37 @@ function Chat({ user, friends, group, send }: Props) {
         alignItems: "center",
       }}
     >
-      <Text>{group.name}</Text>
+      <View
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+          position: "relative",
+          paddingBottom: 8,
+        }}
+      >
+        <View
+          style={{
+            position: "absolute",
+            height: "100%",
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "flex-start",
+            paddingLeft: 16,
+          }}
+        >
+          <View style={{ height: 24, aspectRatio: 1 }}>
+            <TouchableOpacity onPress={goBack}>
+              <AntDesign name="caretleft" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <Text style={{ fontSize: 20, fontWeight: "700", color: "#000" }}>
+          {group.name}
+        </Text>
+      </View>
       <KeyboardAvoidingView
         style={{
           width: "100%",
@@ -86,7 +118,9 @@ function Chat({ user, friends, group, send }: Props) {
                     textAlign: chatBubble.user === user.id ? "right" : "left",
                   }}
                 >
-                  {chatBubble.user === user.id ? "Me" : "Other"}
+                  {chatBubble.user === user.id
+                    ? "Jag"
+                    : friends.find((i) => i.id === chatBubble.user)?.name || ""}
                 </Text>
               </View>
             )}

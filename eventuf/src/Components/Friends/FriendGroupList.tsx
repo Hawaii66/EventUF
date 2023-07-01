@@ -20,7 +20,8 @@ interface Props {
   user: ActiveUser;
   setUser: (u: ActiveUser) => void;
   setShowFriends: (b: (b: boolean) => boolean) => void;
-  setChatIndex: (i: number) => void;
+  chatWithFriend: (i: number) => void;
+  chatWithGroup: (i: number) => void;
   showFriends: boolean;
   showGroups: boolean;
   setShowGroups: (b: (b: boolean) => boolean) => void;
@@ -31,7 +32,8 @@ function FriendGroupList({
   user,
   setUser,
   setShowFriends,
-  setChatIndex,
+  chatWithFriend,
+  chatWithGroup,
   setShowGroups,
   showFriends,
   showGroups,
@@ -128,7 +130,7 @@ function FriendGroupList({
                           color="black"
                         />
                       ),
-                      onPress: () => setChatIndex(idx),
+                      onPress: () => chatWithFriend(idx),
                     },
                   ]}
                 />
@@ -191,74 +193,74 @@ function FriendGroupList({
             <FlatList
               contentContainerStyle={{ maxWidth: "85%", paddingRight: 12 }}
               data={user.groups}
-              renderItem={({ item: group }) => (
-                <View
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    flexDirection: "row",
-                    position: "relative",
-                    borderColor: group.color,
-                    borderWidth: 2,
-                    borderRadius: 12,
-                    marginVertical: 4,
-                    overflow: "hidden",
-                  }}
-                >
+              renderItem={({ item: group, index: idx }) => (
+                <TouchableOpacity onPress={() => chatWithGroup(idx)}>
                   <View
                     style={{
-                      position: "absolute",
                       width: "100%",
-                      height: "100%",
-                      backgroundColor: group.color,
-                      opacity: 0.6,
-                      overflow: "hidden",
-                    }}
-                  />
-                  <View
-                    style={{
                       display: "flex",
-                      flexDirection: "column",
                       justifyContent: "space-between",
                       alignItems: "center",
-                      paddingHorizontal: 8,
-                      paddingVertical: 4,
+                      flexDirection: "row",
+                      position: "relative",
+                      borderColor: group.color,
+                      borderWidth: 2,
+                      borderRadius: 12,
+                      marginVertical: 4,
+                      overflow: "hidden",
                     }}
                   >
-                    <Text
+                    <View
                       style={{
-                        fontSize: 20,
-                        color: "#000",
-                        fontWeight: "700",
-                        textAlign: "left",
+                        position: "absolute",
                         width: "100%",
+                        height: "100%",
+                        backgroundColor: group.color,
+                        opacity: 0.6,
+                        overflow: "hidden",
+                      }}
+                    />
+                    <View
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
                       }}
                     >
-                      {group.name}
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        color: "#777",
-                        fontWeight: "500",
-                        paddingLeft: 12,
-                        textAlign: "left",
-                        width: "100%",
-                      }}
-                    >
-                      {group.members.length} st i gruppen
-                    </Text>
-                  </View>
-                  <TouchableOpacity>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          color: "#000",
+                          fontWeight: "700",
+                          textAlign: "left",
+                          width: "100%",
+                        }}
+                      >
+                        {group.name}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          color: "#777",
+                          fontWeight: "500",
+                          paddingLeft: 12,
+                          textAlign: "left",
+                          width: "100%",
+                        }}
+                      >
+                        {group.members.length} st i gruppen
+                      </Text>
+                    </View>
                     <MaterialCommunityIcons
                       name="message-arrow-right"
                       size={16 * 2}
                       color="black"
                     />
-                  </TouchableOpacity>
-                </View>
+                  </View>
+                </TouchableOpacity>
               )}
             />
           </View>

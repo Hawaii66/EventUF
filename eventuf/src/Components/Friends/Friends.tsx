@@ -112,14 +112,53 @@ function Friends() {
   const [showGroups, setShowGroups] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
   const [chatIndex, setChatIndex] = useState(-1);
+  const [chatWithGroup, setChatWithGroup] = useState(false);
 
   const insets = useSafeAreaInsets();
+
+  const sendMessage = (message: string) => {
+    if (chatWithGroup) {
+      setUser({
+        ...user,
+        groups: [
+          ...user.groups.filter((_, idx) => idx !== chatIndex),
+          {
+            ...user.groups[chatIndex],
+            chat: [
+              ...user.groups[chatIndex].chat,
+              {
+                text: message,
+                user: user.id,
+              },
+            ],
+          },
+        ],
+      });
+    } else {
+      setUser({
+        ...user,
+        friends: [
+          ...user.friends.filter((_, idx) => idx !== chatIndex),
+          {
+            ...user.friends[chatIndex],
+            chat: [
+              ...user.friends[chatIndex].chat,
+              {
+                text: message,
+                user: user.id,
+              },
+            ],
+          },
+        ],
+      });
+    }
+  };
 
   return (
     <View
       style={{
         width: Dimensions.get("screen").width,
-        paddingTop: insets.top * 1.5,
+        paddingTop: insets.top,
         height: "100%",
         display: "flex",
         justifyContent: "flex-start",
@@ -130,7 +169,14 @@ function Friends() {
         <FriendGroupList
           user={user}
           setUser={(s) => setUser(s)}
-          setChatIndex={setChatIndex}
+          chatWithFriend={(i) => {
+            setChatWithGroup(false);
+            setChatIndex(i);
+          }}
+          chatWithGroup={(i) => {
+            setChatWithGroup(true);
+            setChatIndex(i);
+          }}
           setShowCreate={setShowCreate}
           setShowFriends={setShowFriends}
           setShowGroups={setShowGroups}
@@ -139,31 +185,23 @@ function Friends() {
         />
       ) : (
         <Chat
+          goBack={() => setChatIndex(-1)}
           send={(message) => {
-            setUser({
-              ...user,
-              friends: [
-                ...user.friends.filter((_, idx) => idx !== chatIndex),
-                {
-                  ...user.friends[chatIndex],
-                  chat: [
-                    ...user.friends[chatIndex].chat,
-                    {
-                      text: message,
-                      user: user.id,
-                    },
-                  ],
-                },
-              ],
-            });
-            setChatIndex(user.friends.length - 1);
+            sendMessage(message);
+            setChatIndex(
+              (chatWithGroup ? user.groups.length : user.friends.length) - 1
+            );
           }}
-          group={{
-            chat: user.friends[chatIndex].chat,
-            color: user.friends[chatIndex].color,
-            members: [],
-            name: user.friends[chatIndex].name,
-          }}
+          group={
+            chatWithGroup
+              ? user.groups[chatIndex]
+              : {
+                  chat: user.friends[chatIndex].chat,
+                  color: user.friends[chatIndex].color,
+                  members: [],
+                  name: user.friends[chatIndex].name,
+                }
+          }
           user={user}
           friends={user.friends}
         />
